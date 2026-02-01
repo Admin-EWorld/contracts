@@ -1,0 +1,8 @@
+**Software Development Services**
+
+The Service Provider shall provide custom software development services, including:
+- Custom software development, integration, and API services
+- Web application development using modern frameworks and technologies
+- Database design, implementation, and optimization
+- Software architecture and system design
+- Code review and quality assurance

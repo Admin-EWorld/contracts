@@ -75,14 +75,78 @@ def load_clause(name: str) -> str:
         return f.read()
 
 
+def load_granular_service(service_id: str) -> str:
+    """Load individual service file from category subdirectory
+    
+    Args:
+        service_id: Format 'category_servicename' (e.g., 'it_app_development')
+    
+    Returns:
+        Service content as string
+    """
+    # Split service_id into category and service name
+    parts = service_id.split('_', 1)
+    if len(parts) != 2:
+        return ""
+    
+    category, service_name = parts
+    path = os.path.join(CLAUSE_DIR, category, f"{service_name}.txt")
+    
+    if not os.path.exists(path):
+        return ""
+    
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def group_services_by_category(service_ids: list) -> dict:
+    """Group service IDs by their category
+    
+    Args:
+        service_ids: List of service IDs (e.g., ['it_app_development', 'finance_bookkeeping'])
+    
+    Returns:
+        Dict with category names as keys and list of service IDs as values
+    """
+    grouped = {}
+    category_names = {
+        'it': 'IT & Software Services',
+        'finance': 'Finance & Accounting Services',
+        'hr': 'Human Resources & Payroll Services',
+        'business': 'Business Consulting Services'
+    }
+    
+    for service_id in service_ids:
+        parts = service_id.split('_', 1)
+        if len(parts) == 2:
+            category = parts[0]
+            if category not in grouped:
+                grouped[category] = {
+                    'name': category_names.get(category, category.title()),
+                    'services': []
+                }
+            grouped[category]['services'].append(service_id)
+    
+    return grouped
+
+
 def generate_docx_contract(data: dict) -> str:
     """Generate DOCX contract from template"""
     doc = Document(os.path.join(TEMPLATE_DIR, "master_contract.docx"))
 
-    # Build services block
+    # Build services block with category grouping
     services_block = ""
-    for service in data["services"]:
-        services_block += load_clause(service) + "\n\n"
+    grouped_services = group_services_by_category(data["services"])
+    
+    for category, category_data in grouped_services.items():
+        # Add category heading
+        services_block += f"====> {category_data['name'].upper()}\n\n"
+        
+        # Add each service in this category
+        for service_id in category_data['services']:
+            service_content = load_granular_service(service_id)
+            if service_content:
+                services_block += service_content + "\n\n"
 
     # Load service provider and bank details
     service_provider_block = load_clause("service_provider")
@@ -287,10 +351,19 @@ async def generate_contract(
     # Generate PDF
     pdf_file_path = file_path.replace('.docx', '.pdf')
     
-    # Prepare services block for PDF
+    # Prepare services block for PDF with category grouping
     services_block = ""
-    for service in services:
-        services_block += load_clause(service) + "\n\n"
+    grouped_services = group_services_by_category(services)
+    
+    for category, category_data in grouped_services.items():
+        # Add category heading
+        services_block += f"====> {category_data['name'].upper()}\n\n"
+        
+        # Add each service in this category
+        for service_id in category_data['services']:
+            service_content = load_granular_service(service_id)
+            if service_content:
+                services_block += service_content + "\n\n"
     
     # Check if bilingual is requested
     is_bilingual = bilingual == "true" if bilingual else False

@@ -1,0 +1,8 @@
+**Website Development & Design**
+
+The Service Provider shall provide website development services, including:
+- Custom website design, development, and deployment (responsive, mobile-optimized)
+- E-commerce website development and integration
+- Content management system (CMS) implementation
+- Website maintenance and updates
+- SEO optimization and performance tuning

@@ -1,0 +1,8 @@
+**IT Support & Maintenance**
+
+The Service Provider shall provide technical support and maintenance services, including:
+- Technical troubleshooting, helpdesk support, and issue resolution
+- System administration, monitoring, and maintenance services
+- Software updates, patches, and ongoing technical maintenance
+- Remote and on-site technical assistance
+- IT documentation and knowledge base management

@@ -1,0 +1,8 @@
+**HRIS & Employee Records**
+
+The Service Provider shall provide HRIS and employee records management services, including:
+- Employee records management and HRIS (Human Resource Information System) administration
+- HR data analytics and workforce reporting
+- Organizational structure planning and workforce analytics
+- Employee database management and maintenance
+- HR metrics and KPI tracking

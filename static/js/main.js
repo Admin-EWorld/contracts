@@ -344,6 +344,48 @@ function initCheckboxGroups() {
     });
 }
 
+// Service Category Toggle (Expandable Sub-Services)
+function initServiceCategories() {
+    const categoryToggles = document.querySelectorAll('.category-toggle');
+
+    categoryToggles.forEach(toggle => {
+        toggle.addEventListener('change', function () {
+            const category = this.dataset.category;
+            const subServices = document.getElementById(`${category}-services`);
+
+            if (this.checked) {
+                // Show sub-services
+                subServices.style.display = 'block';
+            } else {
+                // Hide sub-services and uncheck all sub-service checkboxes
+                subServices.style.display = 'none';
+                const subCheckboxes = subServices.querySelectorAll('input[type="checkbox"]');
+                subCheckboxes.forEach(cb => cb.checked = false);
+            }
+        });
+    });
+
+    // Auto-check category when any sub-service is checked
+    const subServiceCheckboxes = document.querySelectorAll('.sub-service-item input[type="checkbox"]');
+    subServiceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const subServicesContainer = this.closest('.sub-services');
+            if (subServicesContainer) {
+                const categoryId = subServicesContainer.id.replace('-services', '');
+                const categoryToggle = document.querySelector(`.category-toggle[data-category="${categoryId}"]`);
+
+                // Check if any sub-service is checked
+                const anyChecked = subServicesContainer.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+
+                if (anyChecked && categoryToggle) {
+                    categoryToggle.checked = true;
+                    subServicesContainer.style.display = 'block';
+                }
+            }
+        });
+    });
+}
+
 // Fee Input Formatting
 function initFeeFormatting() {
     const feeInput = document.querySelector('input[name="fees"]');
@@ -476,6 +518,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize checkbox groups
     initCheckboxGroups();
+
+    // Initialize service categories
+    initServiceCategories();
 
     // Initialize fee formatting
     initFeeFormatting();

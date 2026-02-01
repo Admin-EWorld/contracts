@@ -1,0 +1,8 @@
+**Cloud Solutions & Infrastructure**
+
+The Service Provider shall provide cloud infrastructure services, including:
+- Cloud infrastructure setup and management (AWS, Azure, Google Cloud)
+- Cloud migration and optimization services
+- Hosting coordination, domain management, and SSL certificate management
+- System backup, disaster recovery planning, and business continuity services
+- Cloud cost optimization and monitoring

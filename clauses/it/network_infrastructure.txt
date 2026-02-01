@@ -1,0 +1,8 @@
+**Network & Infrastructure Management**
+
+The Service Provider shall provide network and infrastructure services, including:
+- IT infrastructure planning, setup, configuration, and optimization
+- Network architecture design, implementation, and ongoing support
+- Server setup, configuration, and management
+- Network security and firewall configuration
+- Infrastructure monitoring and performance optimization

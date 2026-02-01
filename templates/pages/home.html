@@ -174,47 +174,152 @@
                 <div class="form-group">
                     <label class="form-label required">Services Included</label>
                     <div class="checkbox-group">
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="services" value="finance">
-                            <div>
-                                <strong>💰 Finance & Accounting</strong>
-                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                                    Financial management and accounting services
+                        <!-- Finance & Accounting -->
+                        <div class="service-category-wrapper">
+                            <label class="checkbox-item category-checkbox">
+                                <input type="checkbox" class="category-toggle" data-category="finance">
+                                <div>
+                                    <strong>💰 Finance & Accounting</strong>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                        Financial management and accounting services
+                                    </div>
                                 </div>
+                            </label>
+                            <div class="sub-services" id="finance-services"
+                                style="display:none; margin-left: 2rem; margin-top: 0.5rem;">
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="finance_bookkeeping">
+                                    <span>Bookkeeping & Accounting</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="finance_financial_reporting">
+                                    <span>Financial Reporting & Analysis</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="finance_budgeting">
+                                    <span>Budgeting & Forecasting</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="finance_tax_advisory">
+                                    <span>Tax & VAT Advisory</span>
+                                </label>
                             </div>
-                        </label>
+                        </div>
 
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="services" value="it">
-                            <div>
-                                <strong>💻 IT & Software</strong>
-                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                                    Technology and software development services
+                        <!-- IT & Software -->
+                        <div class="service-category-wrapper">
+                            <label class="checkbox-item category-checkbox">
+                                <input type="checkbox" class="category-toggle" data-category="it">
+                                <div>
+                                    <strong>💻 IT & Software</strong>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                        Technology and software development services
+                                    </div>
                                 </div>
+                            </label>
+                            <div class="sub-services" id="it-services"
+                                style="display:none; margin-left: 2rem; margin-top: 0.5rem;">
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_app_development">
+                                    <span>App Development Services</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_software_development">
+                                    <span>Software Development Services</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_cloud_solutions">
+                                    <span>Cloud Solutions & Infrastructure</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_cybersecurity">
+                                    <span>Cybersecurity Services</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_it_support">
+                                    <span>IT Support & Maintenance</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_network_infrastructure">
+                                    <span>Network & Infrastructure Management</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="it_website_development">
+                                    <span>Website Development & Design</span>
+                                </label>
                             </div>
-                        </label>
+                        </div>
 
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="services" value="hr">
-                            <div>
-                                <strong>👥 HR & Payroll</strong>
-                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                                    Human resources and payroll management
+                        <!-- HR & Payroll -->
+                        <div class="service-category-wrapper">
+                            <label class="checkbox-item category-checkbox">
+                                <input type="checkbox" class="category-toggle" data-category="hr">
+                                <div>
+                                    <strong>👥 HR & Payroll</strong>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                        Human resources and payroll management
+                                    </div>
                                 </div>
+                            </label>
+                            <div class="sub-services" id="hr-services"
+                                style="display:none; margin-left: 2rem; margin-top: 0.5rem;">
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="hr_payroll">
+                                    <span>Payroll Processing & Management</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="hr_recruitment">
+                                    <span>Recruitment & Onboarding</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="hr_hr_policy">
+                                    <span>HR Policy & Compliance</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="hr_training">
+                                    <span>Training & Development</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="hr_hris">
+                                    <span>HRIS & Employee Records</span>
+                                </label>
                             </div>
-                        </label>
+                        </div>
 
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="services" value="business">
-                            <div>
-                                <strong>📊 Business Consulting</strong>
-                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                                    Strategic business advisory services
+                        <!-- Business Consulting -->
+                        <div class="service-category-wrapper">
+                            <label class="checkbox-item category-checkbox">
+                                <input type="checkbox" class="category-toggle" data-category="business">
+                                <div>
+                                    <strong>📊 Business Consulting</strong>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                        Strategic business advisory services
+                                    </div>
                                 </div>
+                            </label>
+                            <div class="sub-services" id="business-services"
+                                style="display:none; margin-left: 2rem; margin-top: 0.5rem;">
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="business_strategy">
+                                    <span>Business Strategy & Planning</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="business_operations">
+                                    <span>Operations & Process Optimization</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="business_sales">
+                                    <span>Sales & Revenue Optimization</span>
+                                </label>
+                                <label class="sub-service-item">
+                                    <input type="checkbox" name="services" value="business_governance">
+                                    <span>Corporate Governance & Compliance</span>
+                                </label>
                             </div>
-                        </label>
+                        </div>
                     </div>
-                    <div class="form-hint">Select all services that will be provided under this contract</div>
+                    <div class="form-hint">Select category, then choose specific services that will be provided under
+                        this contract</div>
                 </div>
 
                 <!-- Form Actions -->
