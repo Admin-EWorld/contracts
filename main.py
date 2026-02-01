@@ -1,20 +1,30 @@
 # ================================
-# Contract Generator Service
-# Tech: Python + FastAPI
-# Run: uvicorn main:app --host 0.0.0.0 --port 4000
+# Contract Generator Service - Version 2.0
+# Professional International Contract Generator
+# Tech: Python + FastAPI + SQLAlchemy + Jinja2
+# Run: uvicorn main:app --host 0.0.0.0 --port 4000 --reload
 # ================================
 
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi import FastAPI, Form, Request, Depends, HTTPException
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from docx import Document
 from datetime import datetime
+from sqlalchemy.orm import Session
+from typing import List
 import os
 import uuid
 from num2words import num2words
 
+# Local imports
+from database import init_db, get_db, Contract
+from pdf_generator import generate_pdf_contract
 
 
+# ================================
+# Configuration
+# ================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, "generated")
@@ -23,7 +33,21 @@ CLAUSE_DIR = os.path.join(BASE_DIR, "clauses")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-app = FastAPI(title="Contract Generator", version="1.0")
+# Initialize database
+init_db()
+
+# FastAPI app
+app = FastAPI(
+    title="ContractPro - Professional Contract Generator",
+    description="Generate legally compliant international service agreements",
+    version="2.0"
+)
+
+# Static files and templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+# Currency configuration
 CURRENCIES = {
     "USD": {"symbol": "$", "name": "US Dollars", "rate": 1},
     "EUR": {"symbol": "€", "name": "Euros", "rate": 1.08},
@@ -33,11 +57,12 @@ CURRENCIES = {
 }
 
 
-# ------------------------------
+# ================================
 # Utility Functions
-# ------------------------------
+# ================================
 
 def load_clause(name: str) -> str:
+    """Load a clause template from file"""
     path = os.path.join(CLAUSE_DIR, f"{name}.txt")
     if not os.path.exists(path):
         return ""
@@ -45,126 +70,186 @@ def load_clause(name: str) -> str:
         return f.read()
 
 
-def generate_contract(data: dict) -> str:
+def generate_docx_contract(data: dict) -> str:
+    """Generate DOCX contract from template"""
     doc = Document(os.path.join(TEMPLATE_DIR, "master_contract.docx"))
 
+    # Build services block
     services_block = ""
     for service in data["services"]:
         services_block += load_clause(service) + "\n\n"
 
+    # Replacements
     replacements = {
-    "{{CLIENT_NAME}}": data["client_name"],
-    "{{COUNTRY}}": data["country"],
-    "{{EFFECTIVE_DATE}}": data["date"],
-    "{{FEES_AMOUNT}}": data["fees"],
-    "{{FEES_IN_WORDS}}": data["fees_words"],
-    "{{CURRENCY_SYMBOL}}": data["currency_symbol"],
-    "{{CURRENCY_NAME}}": data["currency_name"],
-    "{{USD_EQUIVALENT}}": data["usd_equivalent"],
-    "{{CONTRACT_DURATION}}": data["contract_duration"],
-    "{{SERVICES_BLOCK}}": services_block
+        "{{CLIENT_NAME}}": data["client_name"],
+        "{{COUNTRY}}": data["country"],
+        "{{EFFECTIVE_DATE}}": data["date"],
+        "{{FEES_AMOUNT}}": data["fees"],
+        "{{FEES_IN_WORDS}}": data["fees_words"],
+        "{{CURRENCY_SYMBOL}}": data["currency_symbol"],
+        "{{CURRENCY_NAME}}": data["currency_name"],
+        "{{USD_EQUIVALENT}}": data["usd_equivalent"],
+        "{{CONTRACT_DURATION}}": data["contract_duration"],
+        "{{SERVICES_BLOCK}}": services_block
     }
 
-
+    # Replace in paragraphs
     for p in doc.paragraphs:
         for key, value in replacements.items():
             if key in p.text:
                 p.text = p.text.replace(key, value)
 
+    # Replace in tables
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for key, value in replacements.items():
+                    if key in cell.text:
+                        cell.text = cell.text.replace(key, value)
+
+    # Save file
     file_id = str(uuid.uuid4())
     file_path = os.path.join(OUTPUT_DIR, f"contract_{file_id}.docx")
     doc.save(file_path)
-    return file_path
+    
+    return file_path, file_id
 
-# ------------------------------
-# Web UI
-# ------------------------------
+
+def save_contract_to_db(data: dict, file_path: str, file_id: str, db: Session) -> Contract:
+    """Save contract details to database"""
+    contract = Contract(
+        client_name=data["client_name"],
+        country=data["country"],
+        fees=data["fees"],
+        fees_numeric=float(data["fees"].replace(",", "")),
+        fees_words=data["fees_words"],
+        currency=data["currency"],
+        currency_symbol=data["currency_symbol"],
+        currency_name=data["currency_name"],
+        usd_equivalent=data["usd_equivalent"],
+        contract_duration=data["contract_duration"],
+        services=", ".join([s.title() for s in data["services"]]),
+        effective_date=data["date"],
+        file_path=file_path,
+        file_id=file_id
+    )
+    
+    db.add(contract)
+    db.commit()
+    db.refresh(contract)
+    
+    return contract
+
+
+# ================================
+# Routes - Pages
+# ================================
 
 @app.get("/", response_class=HTMLResponse)
-def home():
-    return """
-<html>
-<head>
-<title>Contract Generator</title>
-</head>
-<body style="font-family:Arial;max-width:900px;margin:auto">
-<h2>International Contract Generator</h2>
-
-<form method="post" action="/generate">
-
-<label>Client Name</label><br>
-<input name="client_name" required style="width:100%"><br><br>
-
-<label>Country</label><br>
-<select name="country">
-  <option>USA</option>
-  <option>UK</option>
-  <option>UAE</option>
-  <option>KSA</option>
-  <option>Bahrain</option>
-</select><br><br>
-
-<label>Contract Duration</label><br>
-<select name="duration">
-  <option>6 Months</option>
-  <option>12 Months</option>
-  <option>24 Months</option>
-  <option>36 Months</option>
-</select><br><br>
-
-<label>Fee Amount</label><br>
-<input name="fees" placeholder="2000" required><br><br>
-
-<label>Currency</label><br>
-<select name="currency">
-  <option value="USD">USD – US Dollar</option>
-  <option value="EUR">EUR – Euro</option>
-  <option value="GBP">GBP – Pound</option>
-  <option value="AED">AED – Dirham</option>
-  <option value="SAR">SAR – Riyal</option>
-</select><br><br>
-
-<label>Services</label><br>
-<input type="checkbox" name="services" value="finance"> Finance & Accounting<br>
-<input type="checkbox" name="services" value="it"> IT / Software<br>
-<input type="checkbox" name="services" value="hr"> HR & Payroll<br>
-<input type="checkbox" name="services" value="business"> Business Consulting<br><br>
-
-<button type="submit" style="padding:10px 20px;font-size:16px">
-Generate Contract
-</button>
-
-</form>
-</body>
-</html>
-"""
+async def home(request: Request):
+    """Home page with contract generation form"""
+    return templates.TemplateResponse(
+        "pages/home.html",
+        {"request": request, "active_page": "home"}
+    )
 
 
-# ------------------------------
-# Generate Contract
-# ------------------------------
+@app.get("/contracts", response_class=HTMLResponse)
+async def contracts_page(
+    request: Request,
+    page: int = 1,
+    db: Session = Depends(get_db)
+):
+    """Contracts management page"""
+    per_page = 20
+    offset = (page - 1) * per_page
+    
+    # Get total count
+    total = db.query(Contract).count()
+    total_pages = (total + per_page - 1) // per_page
+    
+    # Get contracts for current page
+    contracts = db.query(Contract)\
+        .order_by(Contract.created_at.desc())\
+        .offset(offset)\
+        .limit(per_page)\
+        .all()
+    
+    # Format dates for display
+    for contract in contracts:
+        contract.created_at = contract.created_at.strftime("%Y-%m-%d %H:%M")
+    
+    return templates.TemplateResponse(
+        "pages/contracts.html",
+        {
+            "request": request,
+            "active_page": "contracts",
+            "contracts": contracts,
+            "page": page,
+            "total_pages": total_pages,
+            "total": total
+        }
+    )
+
+
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    """About page"""
+    return templates.TemplateResponse(
+        "pages/about.html",
+        {"request": request, "active_page": "about"}
+    )
+
+
+# ================================
+# Routes - Contract Generation
+# ================================
 
 @app.post("/generate")
-def generate(
+async def generate_contract(
     client_name: str = Form(...),
     country: str = Form(...),
     fees: str = Form(...),
     currency: str = Form("USD"),
     duration: str = Form("12 Months"),
-    services: list[str] = Form([])
+    services: List[str] = Form([]),
+    db: Session = Depends(get_db)
 ):
-    amount = float(fees.replace(",", ""))
-    currency_data = CURRENCIES[currency]
-
+    """Generate contract and save to database"""
+    
+    # Validation
+    if not services:
+        raise HTTPException(status_code=400, detail="Please select at least one service")
+    
+    try:
+        # Clean and parse fee amount
+        amount = float(fees.replace(",", ""))
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid fee amount")
+    
+    # Get currency data
+    currency_data = CURRENCIES.get(currency)
+    if not currency_data:
+        raise HTTPException(status_code=400, detail="Invalid currency")
+    
+    # Calculate USD equivalent
     usd_equivalent = round(amount * currency_data["rate"], 2)
-
-    fees_in_words = num2words(amount, to="currency", currency=currency).title()
-
+    
+    # Convert amount to words
+    try:
+        fees_in_words = num2words(amount, to="currency", currency=currency).title()
+    except:
+        fees_in_words = f"{amount} {currency}"
+    
+    # Prepare data
     data = {
         "client_name": client_name,
         "country": country,
         "fees": f"{amount:,.2f}",
         "fees_words": fees_in_words,
+        "currency": currency,
         "currency_symbol": currency_data["symbol"],
         "currency_name": currency_data["name"],
         "usd_equivalent": f"{usd_equivalent:,.2f}",
@@ -172,7 +257,176 @@ def generate(
         "date": datetime.today().strftime("%d %B %Y"),
         "services": services
     }
+    
+    # Generate DOCX
+    file_path, file_id = generate_docx_contract(data)
+    
+    # Save to database
+    contract = save_contract_to_db(data, file_path, file_id, db)
+    
+    # Return file
+    return FileResponse(
+        file_path,
+        filename=f"Service_Agreement_{client_name.replace(' ', '_')}_{datetime.today().strftime('%Y%m%d')}.docx",
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
 
-    file_path = generate_contract(data)
-    return FileResponse(file_path, filename="Service_Agreement.docx")
 
+# ================================
+# Routes - Contract Management
+# ================================
+
+@app.get("/api/contract/{contract_id}")
+async def get_contract(contract_id: int, db: Session = Depends(get_db)):
+    """Get contract details by ID"""
+    contract = db.query(Contract).filter(Contract.id == contract_id).first()
+    
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    
+    return {
+        "id": contract.id,
+        "client_name": contract.client_name,
+        "country": contract.country,
+        "fees": contract.fees,
+        "currency": contract.currency,
+        "currency_symbol": contract.currency_symbol,
+        "currency_name": contract.currency_name,
+        "usd_equivalent": contract.usd_equivalent,
+        "duration": contract.contract_duration,
+        "services": contract.services,
+        "effective_date": contract.effective_date,
+        "created_at": contract.created_at.strftime("%Y-%m-%d %H:%M")
+    }
+
+
+@app.get("/download/{contract_id}/{format}")
+async def download_contract(
+    contract_id: int,
+    format: str,
+    db: Session = Depends(get_db)
+):
+    """Download contract in specified format (docx or pdf)"""
+    contract = db.query(Contract).filter(Contract.id == contract_id).first()
+    
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    
+    if format.lower() == "docx":
+        # Return existing DOCX file
+        if not os.path.exists(contract.file_path):
+            raise HTTPException(status_code=404, detail="Contract file not found")
+        
+        return FileResponse(
+            contract.file_path,
+            filename=f"Service_Agreement_{contract.client_name.replace(' ', '_')}_{contract.effective_date.replace(' ', '_')}.docx",
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    
+    elif format.lower() == "pdf":
+        # Generate PDF
+        pdf_path = contract.file_path.replace('.docx', '.pdf')
+        
+        # Prepare data for PDF generation
+        services_block = ""
+        for service in contract.services.split(", "):
+            services_block += load_clause(service.lower()) + "\n\n"
+        
+        pdf_data = {
+            "client_name": contract.client_name,
+            "country": contract.country,
+            "fees": contract.fees,
+            "fees_in_words": contract.fees_words,
+            "currency_symbol": contract.currency_symbol,
+            "currency_name": contract.currency_name,
+            "usd_equivalent": contract.usd_equivalent,
+            "contract_duration": contract.contract_duration,
+            "date": contract.effective_date,
+            "services_block": services_block
+        }
+        
+        generate_pdf_contract(pdf_data, pdf_path)
+        
+        return FileResponse(
+            pdf_path,
+            filename=f"Service_Agreement_{contract.client_name.replace(' ', '_')}_{contract.effective_date.replace(' ', '_')}.pdf",
+            media_type="application/pdf"
+        )
+    
+    else:
+        raise HTTPException(status_code=400, detail="Invalid format. Use 'docx' or 'pdf'")
+
+
+@app.delete("/api/contract/{contract_id}")
+async def delete_contract(contract_id: int, db: Session = Depends(get_db)):
+    """Delete a contract"""
+    contract = db.query(Contract).filter(Contract.id == contract_id).first()
+    
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    
+    # Delete files
+    if os.path.exists(contract.file_path):
+        os.remove(contract.file_path)
+    
+    pdf_path = contract.file_path.replace('.docx', '.pdf')
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
+    
+    # Delete from database
+    db.delete(contract)
+    db.commit()
+    
+    return {"message": "Contract deleted successfully"}
+
+
+# ================================
+# Routes - Analytics & Stats
+# ================================
+
+@app.get("/api/stats")
+async def get_stats(db: Session = Depends(get_db)):
+    """Get contract statistics"""
+    total_contracts = db.query(Contract).count()
+    
+    # Total revenue by currency
+    revenue_by_currency = {}
+    contracts = db.query(Contract).all()
+    
+    for contract in contracts:
+        currency = contract.currency
+        if currency not in revenue_by_currency:
+            revenue_by_currency[currency] = 0
+        revenue_by_currency[currency] += contract.fees_numeric
+    
+    # Most common services
+    service_counts = {}
+    for contract in contracts:
+        for service in contract.services.split(", "):
+            service_counts[service] = service_counts.get(service, 0) + 1
+    
+    return {
+        "total_contracts": total_contracts,
+        "revenue_by_currency": revenue_by_currency,
+        "service_counts": service_counts,
+        "recent_contracts": len([c for c in contracts if (datetime.utcnow() - c.created_at).days <= 30])
+    }
+
+
+# ================================
+# Health Check
+# ================================
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "version": "2.0",
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=4000)

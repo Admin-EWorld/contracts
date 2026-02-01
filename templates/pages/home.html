@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Professional International Contract Generator</h1>
+        <p>Create legally compliant service agreements in minutes. Multi-currency support, international standards, and
+            professional templates.</p>
+
+        <div class="hero-features">
+            <div class="feature-badge">
+                <h4>🌍 Global Standards</h4>
+                <p>Compliant with international legal frameworks</p>
+            </div>
+            <div class="feature-badge">
+                <h4>💱 Multi-Currency</h4>
+                <p>Support for USD, EUR, GBP, AED, SAR</p>
+            </div>
+            <div class="feature-badge">
+                <h4>📄 Multiple Formats</h4>
+                <p>Export as PDF or DOCX</p>
+            </div>
+            <div class="feature-badge">
+                <h4>⚡ Instant Generation</h4>
+                <p>Create contracts in seconds</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Form Section -->
+<section style="padding: var(--spacing-2xl) 0;">
+    <div class="container-sm">
+        <!-- Progress Steps -->
+        <div id="progressSteps" class="progress-steps">
+            <div class="progress-line" style="width: 0%;"></div>
+            <div class="step active">
+                <div class="step-circle">1</div>
+                <div class="step-label">Client Info</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">2</div>
+                <div class="step-label">Contract Details</div>
+            </div>
+            <div class="step">
+                <div class="step-circle">3</div>
+                <div class="step-label">Generate</div>
+            </div>
+        </div>
+
+        <!-- Contract Form -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Create New Contract</h2>
+                <p class="card-subtitle">Fill in the details below to generate your professional service agreement</p>
+            </div>
+
+            <form id="contractForm" method="post" action="/generate">
+                <!-- Client Information -->
+                <div class="form-group">
+                    <label class="form-label required" for="client_name">Client Name</label>
+                    <input type="text" id="client_name" name="client_name" class="form-input"
+                        placeholder="Enter client or company name" required>
+                    <div class="form-hint">Full legal name of the client or organization</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" for="country">Country</label>
+                    <select id="country" name="country" class="form-select" required>
+                        <option value="">Select a country</option>
+                        <option value="USA">United States of America</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="UAE">United Arab Emirates</option>
+                        <option value="KSA">Kingdom of Saudi Arabia</option>
+                        <option value="Bahrain">Bahrain</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Kuwait">Kuwait</option>
+                        <option value="Oman">Oman</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Germany">Germany</option>
+                        <option value="France">France</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="India">India</option>
+                    </select>
+                    <div class="form-hint">Jurisdiction where the contract will be executed</div>
+                </div>
+
+                <!-- Contract Details -->
+                <div class="form-group">
+                    <label class="form-label required" for="duration">Contract Duration</label>
+                    <select id="duration" name="duration" class="form-select" required>
+                        <option value="">Select duration</option>
+                        <option value="3 Months">3 Months</option>
+                        <option value="6 Months">6 Months</option>
+                        <option value="12 Months">12 Months (1 Year)</option>
+                        <option value="24 Months">24 Months (2 Years)</option>
+                        <option value="36 Months">36 Months (3 Years)</option>
+                        <option value="48 Months">48 Months (4 Years)</option>
+                        <option value="60 Months">60 Months (5 Years)</option>
+                    </select>
+                    <div class="form-hint">Length of the service agreement</div>
+                </div>
+
+                <!-- Financial Details -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-md);">
+                    <div class="form-group">
+                        <label class="form-label required" for="fees">Fee Amount</label>
+                        <input type="text" id="fees" name="fees" class="form-input" placeholder="10,000" required>
+                        <div class="form-hint">Total contract value (numbers only)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="currency">Currency</label>
+                        <select id="currency" name="currency" class="form-select" required>
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - Pound Sterling</option>
+                            <option value="AED">AED - UAE Dirham</option>
+                            <option value="SAR">SAR - Saudi Riyal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Currency Converter Display -->
+                <div id="currencyConverter"></div>
+
+                <!-- Services Selection -->
+                <div class="form-group">
+                    <label class="form-label required">Services Included</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services" value="finance">
+                            <div>
+                                <strong>💰 Finance & Accounting</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    Financial management and accounting services
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services" value="it">
+                            <div>
+                                <strong>💻 IT & Software</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    Technology and software development services
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services" value="hr">
+                            <div>
+                                <strong>👥 HR & Payroll</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    Human resources and payroll management
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="services" value="business">
+                            <div>
+                                <strong>📊 Business Consulting</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                    Strategic business advisory services
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="form-hint">Select all services that will be provided under this contract</div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="btn-group">
+                    <button type="button" id="previewBtn" class="btn btn-outline btn-lg">
+                        👁️ Preview Contract
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        📄 Generate Contract
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Info Cards -->
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-xl);">
+            <div class="card">
+                <h3>✅ Legally Compliant</h3>
+                <p style="color: var(--text-secondary);">
+                    Our contracts are designed to meet international legal standards and are suitable for use across
+                    multiple jurisdictions.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>🔒 Secure & Private</h3>
+                <p style="color: var(--text-secondary);">
+                    All contract data is processed securely. We don't share your information with third parties.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>⚡ Instant Download</h3>
+                <p style="color: var(--text-secondary);">
+                    Generate and download your contract immediately in professional DOCX or PDF format.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preview Modal -->
+<div id="previewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Contract Preview</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Content will be dynamically inserted -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-close">Close</button>
+            <button class="btn btn-primary" onclick="document.getElementById('contractForm').submit();">
+                Generate Contract
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize progress steps
+    const progress = new ContractGenerator.ProgressSteps('progressSteps');
+
+    // Update progress based on form interaction
+    document.getElementById('contractForm').addEventListener('input', function () {
+        const clientName = document.getElementById('client_name').value;
+        const country = document.getElementById('country').value;
+        const fees = document.getElementById('fees').value;
+        const services = document.querySelectorAll('input[name="services"]:checked');
+
+        if (clientName && country) {
+            progress.setStep(2);
+        }
+        if (fees && services.length > 0) {
+            progress.setStep(3);
+        }
+    });
+</script>
+{% endblock %}

@@ -3,4 +3,8 @@ uvicorn
 python-docx
 python-multipart
 num2words
-
+jinja2
+sqlalchemy
+aiosqlite
+reportlab
+pypdf2

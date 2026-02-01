@@ -1,10 +1,22 @@
-### INFORMATION TECHNOLOGY SERVICES
+====> INFORMATION TECHNOLOGY & SOFTWARE SERVICES
 
-The Services may include:
+The Service Provider shall provide professional information technology services, which may include but are not limited to:
 
-• IT systems setup and configuration  
-• Networking and infrastructure support  
-• Troubleshooting and technical assistance  
-• Website and web application development  
-• Mobile application and custom software development  
-• Hosting coordination and system maintenance  
+• IT infrastructure planning, setup, configuration, and optimization
+• Network architecture design, implementation, and ongoing support
+• System administration, monitoring, and maintenance services
+• Technical troubleshooting, helpdesk support, and issue resolution
+• Custom website design, development, and deployment (responsive, mobile-optimized)
+• Web application development using modern frameworks and technologies
+• Mobile application development for iOS and Android platforms
+• Custom software development, integration, and API services
+• Cloud infrastructure setup and management (AWS, Azure, Google Cloud)
+• Database design, implementation, and optimization
+• Cybersecurity assessments and implementation of security best practices
+• System backup, disaster recovery planning, and business continuity services
+• Hosting coordination, domain management, and SSL certificate management
+• Software updates, patches, and ongoing technical maintenance
+
+INTELLECTUAL PROPERTY: Unless otherwise agreed in writing, all custom code, designs, and work products created specifically for the Client shall become the property of the Client upon full payment of fees. The Service Provider retains ownership of any pre-existing tools, frameworks, or proprietary methodologies used in delivering the services.
+
+THIRD-PARTY SOFTWARE: The Client is responsible for obtaining and maintaining all necessary licenses for third-party software, platforms, and services used in conjunction with the Service Provider's work.  

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section style="padding: var(--spacing-2xl) 0;">
+    <div class="container">
+        <div class="card-header" style="margin-bottom: var(--spacing-xl);">
+            <h1 class="card-title">My Contracts</h1>
+            <p class="card-subtitle">View, search, and manage all your generated contracts</p>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="card" style="margin-bottom: var(--spacing-lg);">
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-md);">
+                <input type="text" id="searchInput" class="form-input"
+                    placeholder="Search by client name, country, or services..." onkeyup="filterContracts()">
+                <select id="filterCurrency" class="form-select" onchange="filterContracts()" style="max-width: 200px;">
+                    <option value="">All Currencies</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="AED">AED</option>
+                    <option value="SAR">SAR</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Contracts Table -->
+        {% if contracts %}
+        <div class="table-container">
+            <table id="contractsTable">
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Country</th>
+                        <th>Amount</th>
+                        <th>Services</th>
+                        <th>Duration</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contract in contracts %}
+                    <tr data-client="{{ contract.client_name|lower }}" data-country="{{ contract.country|lower }}"
+                        data-currency="{{ contract.currency }}" data-services="{{ contract.services|lower }}">
+                        <td><strong>{{ contract.client_name }}</strong></td>
+                        <td>{{ contract.country }}</td>
+                        <td>
+                            <span class="badge badge-primary">
+                                {{ contract.currency_symbol }}{{ contract.fees }}
+                            </span>
+                        </td>
+                        <td>{{ contract.services }}</td>
+                        <td>{{ contract.duration }}</td>
+                        <td>{{ contract.created_at }}</td>
+                        <td>
+                            <div style="display: flex; gap: var(--spacing-sm);">
+                                <a href="/download/{{ contract.id }}/docx" class="btn btn-sm btn-primary"
+                                    title="Download DOCX">
+                                    📄 DOCX
+                                </a>
+                                <a href="/download/{{ contract.id }}/pdf" class="btn btn-sm btn-success"
+                                    title="Download PDF">
+                                    📑 PDF
+                                </a>
+                                <button onclick="viewContract({{ contract.id }})" class="btn btn-sm btn-outline"
+                                    title="View Details">
+                                    👁️
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: center; margin-top: var(--spacing-xl); gap: var(--spacing-sm);">
+            {% if page > 1 %}
+            <a href="/contracts?page={{ page - 1 }}" class="btn btn-secondary">← Previous</a>
+            {% endif %}
+
+            <span style="padding: var(--spacing-md); color: var(--text-secondary);">
+                Page {{ page }} of {{ total_pages }}
+            </span>
+
+            {% if page < total_pages %} <a href="/contracts?page={{ page + 1 }}" class="btn btn-secondary">Next →</a>
+                {% endif %}
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="card text-center" style="padding: var(--spacing-2xl);">
+            <h3>No Contracts Yet</h3>
+            <p style="color: var(--text-secondary); margin: var(--spacing-lg) 0;">
+                You haven't generated any contracts yet. Create your first professional service agreement now!
+            </p>
+            <a href="/" class="btn btn-primary btn-lg">
+                📄 Create New Contract
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- View Contract Modal -->
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Contract Details</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="contractDetails">
+            <!-- Content will be dynamically loaded -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary modal-close">Close</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterContracts() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const currencyFilter = document.getElementById('filterCurrency').value;
+        const table = document.getElementById('contractsTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const client = row.getAttribute('data-client');
+            const country = row.getAttribute('data-country');
+            const currency = row.getAttribute('data-currency');
+            const services = row.getAttribute('data-services');
+
+            const matchesSearch = client.includes(searchInput) ||
+                country.includes(searchInput) ||
+                services.includes(searchInput);
+            const matchesCurrency = !currencyFilter || currency === currencyFilter;
+
+            if (matchesSearch && matchesCurrency) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    async function viewContract(contractId) {
+        try {
+            const response = await fetch(`/api/contract/${contractId}`);
+            const contract = await response.json();
+
+            const detailsHtml = `
+            <div class="card">
+                <h3>Contract Information</h3>
+                <table>
+                    <tr><td><strong>Client Name:</strong></td><td>${contract.client_name}</td></tr>
+                    <tr><td><strong>Country:</strong></td><td>${contract.country}</td></tr>
+                    <tr><td><strong>Contract Duration:</strong></td><td>${contract.duration}</td></tr>
+                    <tr><td><strong>Fee Amount:</strong></td><td>${contract.currency_symbol}${contract.fees} ${contract.currency}</td></tr>
+                    <tr><td><strong>USD Equivalent:</strong></td><td>$${contract.usd_equivalent}</td></tr>
+                    <tr><td><strong>Services:</strong></td><td>${contract.services}</td></tr>
+                    <tr><td><strong>Effective Date:</strong></td><td>${contract.effective_date}</td></tr>
+                    <tr><td><strong>Created:</strong></td><td>${contract.created_at}</td></tr>
+                </table>
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
+                <a href="/download/${contractId}/docx" class="btn btn-primary btn-block">
+                    📄 Download DOCX
+                </a>
+                <a href="/download/${contractId}/pdf" class="btn btn-success btn-block">
+                    📑 Download PDF
+                </a>
+            </div>
+        `;
+
+            document.getElementById('contractDetails').innerHTML = detailsHtml;
+            const modal = new ContractGenerator.Modal('viewModal');
+            modal.open();
+        } catch (error) {
+            ContractGenerator.showAlert('Failed to load contract details', 'error');
+        }
+    }
+</script>
+{% endblock %}

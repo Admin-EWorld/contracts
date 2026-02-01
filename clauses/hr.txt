@@ -1,10 +1,21 @@
-### HUMAN RESOURCES & PAYROLL SERVICES
+====> HUMAN RESOURCES & PAYROLL MANAGEMENT SERVICES
 
-The Services may include:
+The Service Provider shall provide professional human resources and payroll services, which may include but are not limited to:
 
-• Payroll processing and reporting  
-• Employee records management  
-• HR policy and compliance support  
-• Onboarding and offboarding assistance  
+• Comprehensive payroll processing, calculation, and disbursement coordination
+• Payroll reporting, tax withholding calculations, and compliance documentation
+• Employee records management and HRIS (Human Resource Information System) administration
+• HR policy development, review, and implementation support
+• Recruitment support, job posting coordination, and candidate screening assistance
+• Employee onboarding processes, documentation, and orientation coordination
+• Offboarding procedures, exit interviews, and final settlement calculations
+• Benefits administration support and coordination
+• Performance management system implementation and tracking
+• Employee relations advisory and workplace issue resolution support
+• HR compliance monitoring and best practices advisory
+• Training and development program coordination
+• Organizational structure planning and workforce analytics
 
-The Client remains solely responsible for legal compliance.
+COMPLIANCE DISCLAIMER: The Client remains solely and exclusively responsible for ensuring full compliance with all applicable labor laws, employment regulations, tax requirements, and statutory obligations in their jurisdiction. The Service Provider provides administrative support and advisory services only and does not assume legal responsibility for the Client's employment practices or regulatory compliance.
+
+DATA PROTECTION: Both parties agree to handle all employee personal data in accordance with applicable data protection and privacy laws (including but not limited to GDPR, CCPA, or local equivalents). The Service Provider will implement appropriate security measures to protect confidential employee information.
