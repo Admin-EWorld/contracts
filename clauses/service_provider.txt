@@ -1,0 +1,11 @@
+### SERVICE PROVIDER DETAILS
+
+The Service Provider is:
+
+• **Name:** {{SERVICE_PROVIDER_NAME}}  
+• **Address:** {{SERVICE_PROVIDER_ADDRESS}}  
+• **Email:** {{SERVICE_PROVIDER_EMAIL}}  
+• **Phone:** {{SERVICE_PROVIDER_PHONE}}  
+
+The Service Provider confirms that it is duly authorized to enter into and perform
+this Agreement.

@@ -1,0 +1,8 @@
+### BANK DETAILS
+
+All payments under this Agreement shall be made to the following account:
+
+• **Account Name:** {{BANK_ACCOUNT_NAME}}  
+• **Bank Name:** {{BANK_NAME}}  
+• **IBAN / Account No.:** {{BANK_IBAN}}  
+• **SWIFT / BIC:** {{BANK_SWIFT}}  
