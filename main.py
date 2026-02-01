@@ -368,9 +368,12 @@ async def download_contract(
         
         pdf_data = {
             "client_name": contract.client_name,
+            "client_address": contract.client_address or "N/A",
+            "client_email": contract.client_email or "N/A",
+            "client_phone": contract.client_phone or "N/A",
             "country": contract.country,
             "fees": contract.fees,
-            "fees_in_words": contract.fees_words,
+            "fees_words": contract.fees_words,
             "currency_symbol": contract.currency_symbol,
             "currency_name": contract.currency_name,
             "usd_equivalent": contract.usd_equivalent,
