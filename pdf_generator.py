@@ -142,7 +142,7 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
         ['Country:', data['country']],
         ['Effective Date:', data['date']],
         ['Contract Duration:', data['contract_duration']],
-        ['Total Fees:', f"{data['currency_symbol']}{data['fees']} ({data['fees_in_words']})"],
+        ['Total Fees:', f"{data['currency_symbol']}{data['fees']} ({data['fees_words']})"],
         ['USD Equivalent:', f"${data['usd_equivalent']} USD"],
     ]
     
@@ -214,7 +214,7 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
     story.append(Paragraph(
         f"The Client agrees to pay the Service Provider a total fee of "
         f"{data['currency_symbol']}{data['fees']} {data['currency_name']} "
-        f"({data['fees_in_words']}) for the services rendered under this Agreement. "
+        f"({data['fees_words']}) for the services rendered under this Agreement. "
         f"The USD equivalent is approximately ${data['usd_equivalent']} USD. "
         f"Payment terms shall be as mutually agreed upon by both parties.",
         body_style
