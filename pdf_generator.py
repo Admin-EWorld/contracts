@@ -257,21 +257,93 @@ def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False)
         "to the Client in accordance with the terms and conditions set forth in this Agreement:",
         body_style
     ))
-    story.append(Spacer(1, 0.08*inch))
+    story.append(Spacer(1, 0.12*inch))
     
-    # Add service clauses with bold headers
+    # Category header style (larger, bold, with color)
+    category_header_style = ParagraphStyle(
+        'CategoryHeader',
+        parent=styles['Heading3'],
+        fontSize=12,
+        textColor=colors.HexColor('#1e40af'),
+        spaceAfter=6,
+        spaceBefore=12,
+        fontName='Helvetica-Bold',
+        leftIndent=0
+    )
+    
+    # Sub-service header style (bold, slightly indented)
+    service_header_style = ParagraphStyle(
+        'ServiceHeader',
+        parent=body_style,
+        fontSize=10,
+        fontName='Helvetica-Bold',
+        spaceAfter=4,
+        spaceBefore=8,
+        leftIndent=20
+    )
+    
+    # Service content style (indented)
+    service_content_style = ParagraphStyle(
+        'ServiceContent',
+        parent=body_style,
+        fontSize=10,
+        leftIndent=20,
+        spaceAfter=2
+    )
+    
+    # Category emojis and descriptions
+    category_info = {
+        'FINANCE & ACCOUNTING SERVICES': {
+            'emoji': '💰',
+            'description': 'Financial management and accounting services'
+        },
+        'IT & SOFTWARE SERVICES': {
+            'emoji': '💻',
+            'description': 'Technology and software development services'
+        },
+        'HUMAN RESOURCES & PAYROLL SERVICES': {
+            'emoji': '👥',
+            'description': 'Human resources and payroll management'
+        },
+        'BUSINESS CONSULTING SERVICES': {
+            'emoji': '📊',
+            'description': 'Strategic business advisory services'
+        }
+    }
+    
+    # Parse and add services with category headers
     services_text = data.get('services_block', '')
+    lines = services_text.split('\n')
     
-    for line in services_text.split('\n'):
-        line = line.strip()
-        if not line or line.startswith('===='):
-            continue
-        # Make service type headers bold
-        if line.startswith('###'):
-            service_name = line.replace('###', '').strip()
-            story.append(Paragraph(f"<b>{service_name}</b>", body_style))
-        else:
-            story.append(Paragraph(line, body_style))
+    current_category = None
+    i = 0
+    
+    while i < len(lines):
+        line = lines[i].strip()
+        
+        # Check for category header (starts with ====>)
+        if line.startswith('====>'):
+            category_name = line.replace('====>', '').strip()
+            current_category = category_name
+            
+            # Get emoji and description for this category
+            cat_info = category_info.get(category_name, {'emoji': '📋', 'description': 'Professional services'})
+            
+            # Add category header with emoji and description
+            category_text = f"{cat_info['emoji']} {category_name.title()} – ({cat_info['description']})"
+            story.append(Paragraph(category_text, category_header_style))
+            story.append(Spacer(1, 0.06*inch))
+            
+        # Check for service header (starts with **)
+        elif line.startswith('**') and line.endswith('**'):
+            service_name = line.replace('**', '').strip()
+            story.append(Paragraph(f"<b>{service_name}</b>", service_header_style))
+            
+        # Regular content line
+        elif line:
+            story.append(Paragraph(line, service_content_style))
+        
+        i += 1
     
     story.append(Spacer(1, 0.12*inch))
     
