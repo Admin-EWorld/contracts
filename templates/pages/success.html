@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Contract Generated Successfully{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 3rem auto;">
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <!-- Success Icon -->
+        <div style="font-size: 4rem; color: var(--color-success); margin-bottom: 1rem;">
+            ✓
+        </div>
+
+        <h1 style="color: var(--color-primary); margin-bottom: 1rem;">
+            Contract Generated Successfully!
+        </h1>
+
+        <p style="color: var(--color-text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+            Your professional service agreement has been created and is ready for download.
+        </p>
+
+        <!-- Download Buttons -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 500px; margin: 0 auto 2rem;">
+            <a href="{{ docx_url }}" class="btn btn-primary" download style="text-decoration: none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    style="vertical-align: middle; margin-right: 0.5rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download DOCX
+            </a>
+
+            <a href="{{ pdf_url }}" class="btn btn-secondary" download style="text-decoration: none;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    style="vertical-align: middle; margin-right: 0.5rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download PDF
+            </a>
+        </div>
+
+        <!-- Contract Details -->
+        <div
+            style="background: var(--color-bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: left;">
+            <h3 style="margin-bottom: 1rem; color: var(--color-primary);">Contract Details</h3>
+            <div style="display: grid; gap: 0.5rem;">
+                <div><strong>Client:</strong> {{ client_name }}</div>
+                <div><strong>Country:</strong> {{ country }}</div>
+                <div><strong>Fees:</strong> {{ currency_symbol }}{{ fees }} {{ currency_name }}</div>
+                <div><strong>Duration:</strong> {{ duration }}</div>
+                <div><strong>Effective Date:</strong> {{ effective_date }}</div>
+                {% if bilingual %}
+                <div><strong>Language:</strong> Bilingual (English + Arabic)</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="/" class="btn" style="text-decoration: none;">
+                Generate Another Contract
+            </a>
+            <a href="/contracts" class="btn" style="text-decoration: none;">
+                View All Contracts
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: var(--color-primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--color-secondary);
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: var(--color-secondary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+    }
+
+    .btn:not(.btn-primary):not(.btn-secondary) {
+        background: var(--color-bg-secondary);
+        color: var(--color-text);
+    }
+
+    .btn:not(.btn-primary):not(.btn-secondary):hover {
+        background: var(--color-bg-tertiary);
+    }
+</style>
+{% endblock %}

@@ -1,5 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 python-docx
 python-multipart
 num2words
@@ -7,4 +7,8 @@ jinja2
 sqlalchemy
 aiosqlite
 reportlab
+PyPDF2
+arabic-reshaper
+python-bidi
+
 pypdf2

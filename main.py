@@ -232,6 +232,7 @@ async def generate_contract(
     currency: str = Form("USD"),
     duration: str = Form("12 Months"),
     services: List[str] = Form([]),
+    bilingual: str = Form(None),  # Checkbox value
     db: Session = Depends(get_db)
 ):
     """Generate contract and save to database"""
@@ -291,19 +292,30 @@ async def generate_contract(
     for service in services:
         services_block += load_clause(service) + "\n\n"
     
+    # Check if bilingual is requested
+    is_bilingual = bilingual == "true" if bilingual else False
+    
     # Add services_block to data for PDF
     data_for_pdf = {**data, "services_block": services_block}
-    pdf_path = generate_pdf_contract(data_for_pdf, pdf_file_path)
+    pdf_path = generate_pdf_contract(data_for_pdf, pdf_file_path, bilingual=is_bilingual)
     
     # Save to database
     contract = save_contract_to_db(data, file_path, file_id, db)
     
-    # Return file
-    return FileResponse(
-        file_path,
-        filename=f"Service_Agreement_{client_name.replace(' ', '_')}_{datetime.today().strftime('%Y%m%d')}.docx",
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
+    # Return success page with download links
+    return templates.TemplateResponse("pages/success.html", {
+        "request": {},
+        "client_name": client_name,
+        "country": country,
+        "fees": f"{amount:,.2f}",
+        "currency_symbol": currency_data["symbol"],
+        "currency_name": currency_data["name"],
+        "duration": duration,
+        "effective_date": contract_start_date,
+        "bilingual": is_bilingual,
+        "docx_url": f"/download/{contract.id}/docx",
+        "pdf_url": f"/download/{contract.id}/pdf"
+    })
 
 
 # ================================
