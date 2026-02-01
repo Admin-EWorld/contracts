@@ -15,7 +15,7 @@
             </div>
             <div class="feature-badge">
                 <h4>💱 Multi-Currency</h4>
-                <p>Support for USD, EUR, GBP, AED, SAR</p>
+                <p>Support for 10 major currencies worldwide</p>
             </div>
             <div class="feature-badge">
                 <h4>📄 Multiple Formats</h4>
@@ -66,6 +66,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label required" for="client_address">Client Address</label>
+                    <textarea id="client_address" name="client_address" class="form-input" rows="2"
+                        placeholder="Enter complete address" required></textarea>
+                    <div class="form-hint">Full address of the client or organization</div>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label required" for="country">Country</label>
                     <select id="country" name="country" class="form-select" required>
                         <option value="">Select a country</option>
@@ -88,6 +95,12 @@
                 </div>
 
                 <!-- Contract Details -->
+                <div class="form-group">
+                    <label class="form-label required" for="contract_start_date">Contract Start Date</label>
+                    <input type="date" id="contract_start_date" name="contract_start_date" class="form-input" required>
+                    <div class="form-hint">Effective date when the contract begins</div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label required" for="duration">Contract Duration</label>
                     <select id="duration" name="duration" class="form-select" required>
@@ -119,6 +132,11 @@
                             <option value="GBP">GBP - Pound Sterling</option>
                             <option value="AED">AED - UAE Dirham</option>
                             <option value="SAR">SAR - Saudi Riyal</option>
+                            <option value="BHD">BHD - Bahraini Dinar</option>
+                            <option value="QAR">QAR - Qatari Riyal</option>
+                            <option value="KWD">KWD - Kuwaiti Dinar</option>
+                            <option value="OMR">OMR - Omani Riyal</option>
+                            <option value="PKR">PKR - Pakistani Rupee</option>
                         </select>
                     </div>
                 </div>

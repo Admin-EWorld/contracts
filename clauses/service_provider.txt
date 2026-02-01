@@ -2,10 +2,10 @@
 
 The Service Provider is:
 
-• **Name:** {{SERVICE_PROVIDER_NAME}}  
-• **Address:** {{SERVICE_PROVIDER_ADDRESS}}  
-• **Email:** {{SERVICE_PROVIDER_EMAIL}}  
-• **Phone:** {{SERVICE_PROVIDER_PHONE}}  
+• **Name:** {{SULMAN SAJID C/O BITBURJ WLL}}  
+• **Address:** {{OFFICE 34, BUILDING 106, ROAD 333, QUDAIBIYA 321, MANAMA, BAHRAIN}}  
+• **Email:** {{[INFO@BITBURJ.ORG]}}  
+• **Phone:** {{+973 3363 7860}}  
 
 The Service Provider confirms that it is duly authorized to enter into and perform
 this Agreement.

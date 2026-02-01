@@ -31,9 +31,10 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
-        fontSize=24,
+        fontSize=20,
         textColor=colors.HexColor('#1e40af'),
-        spaceAfter=30,
+        spaceAfter=20,
+        spaceBefore=10,
         alignment=TA_CENTER,
         fontName='Helvetica-Bold'
     )
@@ -41,29 +42,30 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
     heading_style = ParagraphStyle(
         'CustomHeading',
         parent=styles['Heading2'],
-        fontSize=14,
+        fontSize=12,
         textColor=colors.HexColor('#1e40af'),
-        spaceAfter=12,
-        spaceBefore=12,
+        spaceAfter=8,
+        spaceBefore=10,
         fontName='Helvetica-Bold'
     )
     
     body_style = ParagraphStyle(
         'CustomBody',
         parent=styles['BodyText'],
-        fontSize=11,
+        fontSize=10,
         alignment=TA_JUSTIFY,
-        spaceAfter=12,
-        leading=16
+        spaceAfter=8,
+        leading=14
     )
     
     # Title
     story.append(Paragraph("PROFESSIONAL SERVICE AGREEMENT", title_style))
-    story.append(Spacer(1, 0.3 * inch))
+    story.append(Spacer(1, 0.2 * inch))
     
     # Contract Details Table
     contract_data = [
         ['Client Name:', data['client_name']],
+        ['Client Address:', data.get('client_address', 'N/A')],
         ['Country:', data['country']],
         ['Effective Date:', data['date']],
         ['Contract Duration:', data['contract_duration']],
@@ -78,14 +80,14 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
         ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
         ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#e5e7eb'))
     ]))
     
     story.append(details_table)
-    story.append(Spacer(1, 0.4 * inch))
+    story.append(Spacer(1, 0.25 * inch))
     
     # Introduction
     story.append(Paragraph("1. PARTIES TO THE AGREEMENT", heading_style))
@@ -95,7 +97,7 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
         f"a company operating in {data['country']}.",
         body_style
     ))
-    story.append(Spacer(1, 0.2 * inch))
+    story.append(Spacer(1, 0.15 * inch))
     
     # Services
     story.append(Paragraph("2. SCOPE OF SERVICES", heading_style))
@@ -110,7 +112,7 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
         if line.strip():
             story.append(Paragraph(line, body_style))
     
-    story.append(Spacer(1, 0.2 * inch))
+    story.append(Spacer(1, 0.15 * inch))
     
     # Fees and Payment
     story.append(Paragraph("3. FEES AND PAYMENT TERMS", heading_style))
@@ -173,7 +175,7 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
     
     # Signatures
     story.append(Paragraph("9. SIGNATURES", heading_style))
-    story.append(Spacer(1, 0.3 * inch))
+    story.append(Spacer(1, 0.2 * inch))
     
     signature_data = [
         ['Service Provider', 'Client'],
@@ -182,25 +184,28 @@ def generate_pdf_contract(data: dict, output_path: str) -> str:
         ['Signature', 'Signature'],
         ['', ''],
         ['Date: _______________', 'Date: _______________'],
+        ['', ''],
+        ['_' * 30, '_' * 30],
+        ['Company Stamp (if applicable)', 'Company Stamp (if applicable)'],
     ]
     
     sig_table = Table(signature_data, colWidths=[3*inch, 3*inch])
     sig_table.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
     ]))
     
     story.append(sig_table)
     
     # Footer
-    story.append(Spacer(1, 0.5 * inch))
+    story.append(Spacer(1, 0.3 * inch))
     footer_style = ParagraphStyle(
         'Footer',
         parent=styles['Normal'],
-        fontSize=8,
+        fontSize=7,
         textColor=colors.grey,
         alignment=TA_CENTER
     )

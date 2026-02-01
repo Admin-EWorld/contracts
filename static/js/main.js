@@ -377,7 +377,12 @@ function initCurrencyConverter() {
         EUR: { symbol: '€', name: 'Euros', rate: 1.08 },
         GBP: { symbol: '£', name: 'Pounds Sterling', rate: 1.27 },
         AED: { symbol: 'AED ', name: 'UAE Dirhams', rate: 0.27 },
-        SAR: { symbol: 'SAR ', name: 'Saudi Riyals', rate: 0.27 }
+        SAR: { symbol: 'SAR ', name: 'Saudi Riyals', rate: 0.27 },
+        BHD: { symbol: 'BHD ', name: 'Bahraini Dinars', rate: 2.65 },
+        QAR: { symbol: 'QAR ', name: 'Qatari Riyals', rate: 0.27 },
+        KWD: { symbol: 'KWD ', name: 'Kuwaiti Dinars', rate: 3.25 },
+        OMR: { symbol: 'OMR ', name: 'Omani Riyals', rate: 2.60 },
+        PKR: { symbol: 'PKR ', name: 'Pakistani Rupees', rate: 0.0036 }
     };
 
     function updateConverter() {

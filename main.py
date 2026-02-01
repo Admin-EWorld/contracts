@@ -53,7 +53,12 @@ CURRENCIES = {
     "EUR": {"symbol": "€", "name": "Euros", "rate": 1.08},
     "GBP": {"symbol": "£", "name": "Pounds Sterling", "rate": 1.27},
     "AED": {"symbol": "AED ", "name": "UAE Dirhams", "rate": 0.27},
-    "SAR": {"symbol": "SAR ", "name": "Saudi Riyals", "rate": 0.27}
+    "SAR": {"symbol": "SAR ", "name": "Saudi Riyals", "rate": 0.27},
+    "BHD": {"symbol": "BHD ", "name": "Bahraini Dinars", "rate": 2.65},
+    "QAR": {"symbol": "QAR ", "name": "Qatari Riyals", "rate": 0.27},
+    "KWD": {"symbol": "KWD ", "name": "Kuwaiti Dinars", "rate": 3.25},
+    "OMR": {"symbol": "OMR ", "name": "Omani Riyals", "rate": 2.60},
+    "PKR": {"symbol": "PKR ", "name": "Pakistani Rupees", "rate": 0.0036}
 }
 
 
@@ -79,9 +84,14 @@ def generate_docx_contract(data: dict) -> str:
     for service in data["services"]:
         services_block += load_clause(service) + "\n\n"
 
+    # Load service provider and bank details
+    service_provider_block = load_clause("service_provider")
+    bank_details_block = load_clause("bank_details")
+    
     # Replacements
     replacements = {
         "{{CLIENT_NAME}}": data["client_name"],
+        "{{CLIENT_ADDRESS}}": data.get("client_address", ""),
         "{{COUNTRY}}": data["country"],
         "{{EFFECTIVE_DATE}}": data["date"],
         "{{FEES_AMOUNT}}": data["fees"],
@@ -90,7 +100,9 @@ def generate_docx_contract(data: dict) -> str:
         "{{CURRENCY_NAME}}": data["currency_name"],
         "{{USD_EQUIVALENT}}": data["usd_equivalent"],
         "{{CONTRACT_DURATION}}": data["contract_duration"],
-        "{{SERVICES_BLOCK}}": services_block
+        "{{SERVICES_BLOCK}}": services_block,
+        "{{SERVICE_PROVIDER_BLOCK}}": service_provider_block,
+        "{{BANK_DETAILS_BLOCK}}": bank_details_block
     }
 
     # Replace in paragraphs
@@ -119,6 +131,7 @@ def save_contract_to_db(data: dict, file_path: str, file_id: str, db: Session) -
     """Save contract details to database"""
     contract = Contract(
         client_name=data["client_name"],
+        client_address=data["client_address"],
         country=data["country"],
         fees=data["fees"],
         fees_numeric=float(data["fees"].replace(",", "")),
@@ -208,7 +221,9 @@ async def about_page(request: Request):
 @app.post("/generate")
 async def generate_contract(
     client_name: str = Form(...),
+    client_address: str = Form(...),
     country: str = Form(...),
+    contract_start_date: str = Form(...),
     fees: str = Form(...),
     currency: str = Form("USD"),
     duration: str = Form("12 Months"),
@@ -246,6 +261,7 @@ async def generate_contract(
     # Prepare data
     data = {
         "client_name": client_name,
+        "client_address": client_address,
         "country": country,
         "fees": f"{amount:,.2f}",
         "fees_words": fees_in_words,
@@ -254,7 +270,7 @@ async def generate_contract(
         "currency_name": currency_data["name"],
         "usd_equivalent": f"{usd_equivalent:,.2f}",
         "contract_duration": duration,
-        "date": datetime.today().strftime("%d %B %Y"),
+        "date": contract_start_date,
         "services": services
     }
     
