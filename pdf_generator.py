@@ -83,83 +83,22 @@ def load_clause_content(clause_name: str) -> str:
 
 
 def add_fillable_signature_fields(input_pdf_path: str, output_pdf_path: str, data: dict):
-    """Add fillable form fields to PDF for signatures"""
-    try:
-        reader = PdfReader(input_pdf_path)
-        writer = PdfWriter()
-        
-        # Copy all pages
-        for page in reader.pages:
-            writer.add_page(page)
-        
-        # Get last page for signature fields
-        last_page_num = len(reader.pages) - 1
-        page = writer.pages[last_page_num]
-        
-        # Add form fields (approximate coordinates - may need adjustment)
-        # Service Provider Signature
-        writer.add_form_field(
-            "/Tx",  # Text field
-            "service_provider_signature",
-            page_number=last_page_num,
-            x=72,  # 1 inch from left
-            y=200,  # Approximate position
-            width=200,
-            height=40
-        )
-        
-        # Client Signature
-        writer.add_form_field(
-            "/Tx",
-            "client_signature",
-            page_number=last_page_num,
-            x=350,
-            y=200,
-            width=200,
-            height=40
-        )
-        
-        # Service Provider Date
-        writer.add_form_field(
-            "/Tx",
-            "service_provider_date",
-            page_number=last_page_num,
-            x=72,
-            y=120,
-            width=150,
-            height=20
-        )
-        
-        # Client Date
-        writer.add_form_field(
-            "/Tx",
-            "client_date",
-            page_number=last_page_num,
-            x=350,
-            y=120,
-            width=150,
-            height=20
-        )
-        
-        # Write output
-        with open(output_pdf_path, 'wb') as output_file:
-            writer.write(output_file)
-            
-        return output_pdf_path
-    except Exception as e:
-        # If adding form fields fails, just return original
-        print(f"Warning: Could not add form fields: {e}")
-        return input_pdf_path
+    """
+    Prepare PDF for signatures.
+    Note: PyPDF2 3.0.1 doesn't support add_form_field.
+    Signature fields are pre-printed for manual signing.
+    """
+    # Just return the input path - signature lines are already in the PDF
+    # Users can print and sign manually or use PDF editing software
+    return input_pdf_path
 
 
 def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False) -> str:
     """Generate a professional PDF contract with optional bilingual support"""
     
-    # Create temporary path for PDF before adding form fields
-    temp_path = output_path.replace('.pdf', '_temp.pdf')
-    
+    # Generate PDF directly to output path (no temp file needed since we're not adding form fields)
     doc = SimpleDocTemplate(
-        temp_path,
+        output_path,
         pagesize=letter,
         rightMargin=0.75*inch,
         leftMargin=0.75*inch,
@@ -477,14 +416,5 @@ def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False)
     # Build PDF
     doc.build(story)
     
-    # Add fillable form fields
-    final_path = add_fillable_signature_fields(temp_path, output_path, data)
-    
-    # Clean up temp file if different
-    if final_path != temp_path and os.path.exists(temp_path):
-        try:
-            os.remove(temp_path)
-        except:
-            pass
-    
+    # Return the output path
     return output_path
