@@ -1,0 +1,11 @@
+### LEGAL FRAMEWORK - UNITED STATES OF AMERICA
+
+This Agreement shall be governed by and construed in accordance with the laws of the United States of America and the applicable state law. Any disputes arising from this Agreement shall be subject to the jurisdiction of the competent courts.
+
+**Applicable Laws:**
+• Uniform Commercial Code (UCC)
+• Federal Contract Law
+• State-specific business and commercial regulations
+
+**Regulatory Compliance:**
+The parties agree to comply with all applicable US federal and state regulations including but not limited to SEC regulations (if applicable), data protection laws (including state privacy laws), anti-corruption laws (FCPA), and industry-specific licensing requirements.

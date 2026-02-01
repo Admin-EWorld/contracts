@@ -22,6 +22,8 @@ class Contract(Base):
     id = Column(Integer, primary_key=True, index=True)
     client_name = Column(String, index=True)
     client_address = Column(Text)
+    client_email = Column(String)
+    client_phone = Column(String)
     country = Column(String)
     fees = Column(String)
     fees_numeric = Column(Float)

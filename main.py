@@ -132,6 +132,8 @@ def save_contract_to_db(data: dict, file_path: str, file_id: str, db: Session) -
     contract = Contract(
         client_name=data["client_name"],
         client_address=data["client_address"],
+        client_email=data.get("client_email", ""),
+        client_phone=data.get("client_phone", ""),
         country=data["country"],
         fees=data["fees"],
         fees_numeric=float(data["fees"].replace(",", "")),
@@ -222,6 +224,8 @@ async def about_page(request: Request):
 async def generate_contract(
     client_name: str = Form(...),
     client_address: str = Form(...),
+    client_email: str = Form(...),
+    client_phone: str = Form(...),
     country: str = Form(...),
     contract_start_date: str = Form(...),
     fees: str = Form(...),
@@ -262,6 +266,8 @@ async def generate_contract(
     data = {
         "client_name": client_name,
         "client_address": client_address,
+        "client_email": client_email,
+        "client_phone": client_phone,
         "country": country,
         "fees": f"{amount:,.2f}",
         "fees_words": fees_in_words,
@@ -276,6 +282,18 @@ async def generate_contract(
     
     # Generate DOCX
     file_path, file_id = generate_docx_contract(data)
+    
+    # Generate PDF
+    pdf_file_path = file_path.replace('.docx', '.pdf')
+    
+    # Prepare services block for PDF
+    services_block = ""
+    for service in services:
+        services_block += load_clause(service) + "\n\n"
+    
+    # Add services_block to data for PDF
+    data_for_pdf = {**data, "services_block": services_block}
+    pdf_path = generate_pdf_contract(data_for_pdf, pdf_file_path)
     
     # Save to database
     contract = save_contract_to_db(data, file_path, file_id, db)

@@ -72,6 +72,22 @@
                     <div class="form-hint">Full address of the client or organization</div>
                 </div>
 
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                    <div class="form-group">
+                        <label class="form-label required" for="client_email">Client Email</label>
+                        <input type="email" id="client_email" name="client_email" class="form-input"
+                            placeholder="client@example.com" required>
+                        <div class="form-hint">Primary email address</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="client_phone">Client Phone</label>
+                        <input type="tel" id="client_phone" name="client_phone" class="form-input"
+                            placeholder="+973 XXXX XXXX" required>
+                        <div class="form-hint">Contact phone number</div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label required" for="country">Country</label>
                     <select id="country" name="country" class="form-select" required>
@@ -93,6 +109,7 @@
                     </select>
                     <div class="form-hint">Jurisdiction where the contract will be executed</div>
                 </div>
+
 
                 <!-- Contract Details -->
                 <div class="form-group">

@@ -1,0 +1,12 @@
+### LEGAL FRAMEWORK - INDIA
+
+This Agreement shall be governed by and construed in accordance with the laws of India. Any disputes arising from this Agreement shall be subject to the jurisdiction of the competent courts in India.
+
+**Applicable Laws:**
+• Indian Contract Act, 1872
+• Companies Act, 2013
+• Information Technology Act, 2000
+• Indian Labour Laws
+
+**Regulatory Compliance:**
+The parties agree to comply with all applicable Indian regulations including but not limited to RBI regulations, GST laws, data protection laws (Digital Personal Data Protection Act, 2023), and industry-specific licensing requirements.
