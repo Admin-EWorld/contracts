@@ -261,6 +261,7 @@ def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False)
     
     # Add service clauses with bold headers
     services_text = data.get('services_block', '')
+    
     for line in services_text.split('\n'):
         line = line.strip()
         if not line or line.startswith('===='):

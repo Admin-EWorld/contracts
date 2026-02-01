@@ -138,6 +138,7 @@ def generate_docx_contract(data: dict) -> str:
     services_block = ""
     grouped_services = group_services_by_category(data["services"])
     
+
     for category, category_data in grouped_services.items():
         # Add category heading
         services_block += f"====> {category_data['name'].upper()}\n\n"
@@ -145,8 +146,11 @@ def generate_docx_contract(data: dict) -> str:
         # Add each service in this category
         for service_id in category_data['services']:
             service_content = load_granular_service(service_id)
+
             if service_content:
                 services_block += service_content + "\n\n"
+    
+
 
     # Load service provider and bank details
     service_provider_block = load_clause("service_provider")
@@ -169,19 +173,56 @@ def generate_docx_contract(data: dict) -> str:
         "{{BANK_DETAILS_BLOCK}}": bank_details_block
     }
 
-    # Replace in paragraphs
+    # Replace in paragraphs (preserve formatting by replacing in runs)
+    services_replaced = False
     for p in doc.paragraphs:
-        for key, value in replacements.items():
-            if key in p.text:
-                p.text = p.text.replace(key, value)
+        # Check if paragraph contains any placeholder
+        if any(key in p.text for key in replacements.keys()):
+            # Get the full paragraph text
+            full_text = p.text
+            
+            # Replace all placeholders
+            for key, value in replacements.items():
+                if key in full_text:
+                    if key == "{{SERVICES_BLOCK}}":
+                        print(f"DEBUG: Found SERVICES_BLOCK placeholder in paragraph")
+                        services_replaced = True
+                    full_text = full_text.replace(key, value)
+            
+            # Clear existing runs and add new text
+            # This preserves paragraph formatting but replaces content
+            for run in p.runs:
+                run.text = ""
+            if p.runs:
+                p.runs[0].text = full_text
+            else:
+                p.add_run(full_text)
 
     # Replace in tables
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
-                for key, value in replacements.items():
-                    if key in cell.text:
-                        cell.text = cell.text.replace(key, value)
+                # Check if cell contains any placeholder
+                if any(key in cell.text for key in replacements.keys()):
+                    full_text = cell.text
+                    
+                    for key, value in replacements.items():
+                        if key in full_text:
+                            if key == "{{SERVICES_BLOCK}}":
+                                print(f"DEBUG: Found SERVICES_BLOCK placeholder in table cell")
+                                services_replaced = True
+                            full_text = full_text.replace(key, value)
+                    
+                    # Replace cell text
+                    for paragraph in cell.paragraphs:
+                        for run in paragraph.runs:
+                            run.text = ""
+                        if paragraph.runs:
+                            paragraph.runs[0].text = full_text
+                        else:
+                            paragraph.add_run(full_text)
+    
+
 
     # Save file
     file_id = str(uuid.uuid4())
@@ -447,9 +488,22 @@ async def download_contract(
         pdf_path = contract.file_path.replace('.docx', '.pdf')
         
         # Prepare data for PDF generation
+        # Parse services from database (stored as comma-separated string)
+        service_ids = [s.strip() for s in contract.services.split(", ")]
+        
+        # Build services block with category grouping
         services_block = ""
-        for service in contract.services.split(", "):
-            services_block += load_clause(service.lower()) + "\n\n"
+        grouped_services = group_services_by_category(service_ids)
+        
+        for category, category_data in grouped_services.items():
+            # Add category heading
+            services_block += f"====> {category_data['name'].upper()}\n\n"
+            
+            # Add each service in this category
+            for service_id in category_data['services']:
+                service_content = load_granular_service(service_id)
+                if service_content:
+                    services_block += service_content + "\n\n"
         
         pdf_data = {
             "client_name": contract.client_name,
