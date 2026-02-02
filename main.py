@@ -119,7 +119,7 @@ def group_services_by_category(service_ids: list) -> dict:
     for service_id in service_ids:
         parts = service_id.split('_', 1)
         if len(parts) == 2:
-            category = parts[0]
+            category = parts[0].lower()  # Convert to lowercase for consistent lookup
             if category not in grouped:
                 grouped[category] = {
                     'name': category_names.get(category, category.title()),
@@ -185,7 +185,6 @@ def generate_docx_contract(data: dict) -> str:
             for key, value in replacements.items():
                 if key in full_text:
                     if key == "{{SERVICES_BLOCK}}":
-                        print(f"DEBUG: Found SERVICES_BLOCK placeholder in paragraph")
                         services_replaced = True
                     full_text = full_text.replace(key, value)
             
@@ -495,8 +494,10 @@ async def download_contract(
         services_block = ""
         grouped_services = group_services_by_category(service_ids)
         
+
         for category, category_data in grouped_services.items():
             # Add category heading
+
             services_block += f"====> {category_data['name'].upper()}\n\n"
             
             # Add each service in this category
