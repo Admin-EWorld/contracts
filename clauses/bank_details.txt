@@ -1,9 +1,9 @@
 ### BANK DETAILS
 
-All payments under this Agreement shall be made to the following account:
+All payments under this Agreement shall be made to the following accounts:
 
 • Account Name: BITBURJ WLL
 • Bank Name: AL SALAM BANK
-• IBAN / Account No.: BH78ALSA00790039100100
-• SWIFT / BIC: ALSABHBM
-
+• IBAN / Account No.: BH78ALSA00790039100100 - (BHD)
+• IBAN / Account No.: BH11ALSA00790039150000 - (USD)
+• BIC: ALSABHBM
