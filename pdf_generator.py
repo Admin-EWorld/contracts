@@ -341,8 +341,8 @@ def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False)
             category_name = line.replace('====>', '').strip()
             current_category = category_name
             
-            # Get emoji and description for this category
-            cat_info = category_info.get(category_name, {'emoji': '📋', 'name': 'Professional Services', 'description': 'Professional services'})
+            # Get emoji and description for this category (convert to uppercase for lookup)
+            cat_info = category_info.get(category_name.upper(), {'emoji': '📋', 'name': 'Professional Services', 'description': 'Professional services'})
             
             # Add category header with emoji and description
             category_text = f"{cat_info['emoji']} {cat_info['name']} – ({cat_info['description']})"
