@@ -166,7 +166,25 @@ def generate_pdf_contract(data: dict, output_path: str, bilingual: bool = False)
     logo_path = os.path.join(os.path.dirname(__file__), "static", "images", "logo.png")
     if os.path.exists(logo_path):
         try:
-            logo = Image(logo_path, width=2*inch, height=0.8*inch)
+            # Create image without fixed dimensions to read actual size
+            logo = Image(logo_path)
+            
+            # Max dimensions (bounding box)
+            max_width = 2.5 * inch
+            max_height = 1.5 * inch
+            
+            # Calculate ratio to fit within bounding box while preserving aspect ratio
+            img_width = logo.drawWidth
+            img_height = logo.drawHeight
+            
+            width_ratio = max_width / img_width
+            height_ratio = max_height / img_height
+            scale_factor = min(width_ratio, height_ratio, 1.0)  # Don't scale up, only down
+            
+            # Apply scaling
+            logo.drawWidth = img_width * scale_factor
+            logo.drawHeight = img_height * scale_factor
+            
             logo.hAlign = 'CENTER'
             story.append(logo)
             story.append(Spacer(1, 0.1*inch))
